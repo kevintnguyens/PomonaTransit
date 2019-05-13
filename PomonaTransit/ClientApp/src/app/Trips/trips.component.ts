@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-trips',
   templateUrl: './trips.component.html',
@@ -9,24 +9,22 @@ import { HttpClient } from '@angular/common/http';
 export class TripsComponent implements OnInit {
   public trips: TripOffering[];
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<TripOffering[]>(baseUrl + 'api/Trips').subscribe(result => {
-      this.trips = result;
-    }, error => console.error(error));
+  constructor(private http: HttpClient) {
   }
 
   ngOnInit() {
-    console.log(this.trips);
+    this.getTrips().subscribe(res => this.trips = res);
   }
-
+  getTrips(): Observable<TripOffering[]> {
+    return this.http.get<TripOffering[]>('api/TripOfferings')
+  }
 }
 
-
-interface TripOffering {
-  ID: number;
-  TripNumber: number;
-  Date: Date;
-  ScheduledStartTime: Date;
-  SecheduledArrivalTime: Date;
-  Driver: string;
+export class TripOffering {
+  public date: Date;
+  public driver: string;
+  public id: number;
+  public scheduledStartTime: Date;
+  public secheduledArrivalTime: Date;
+  public  trip: object;
 }
